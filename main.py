@@ -16,4 +16,3 @@ if __name__ == "__main__":
     db_modify.insert_rates(from_date, to_date)
     db_chart.plot_char(from_date, to_date)
 
-

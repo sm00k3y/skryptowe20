@@ -1,10 +1,11 @@
 import psycopg2
 from db_config import config
 import stock_rates
-from datetime import date, timedelta
+from datetime import timedelta
 
 
 def create_currency_table():
+    """ Creating new table """
 
     command = '''CREATE TABLE PLN_EXCHANGE_RATES (
         date DATE NOT NULL,
@@ -34,7 +35,7 @@ def create_currency_table():
 
 
 def insert_rates(from_date, to_date, currency='USD'):
-
+    """ Inserting rates and dates to the newly created table """
     usd_rates = stock_rates.get_rates_avg_time(currency, from_date, to_date)
 
     dates_and_rates = []
@@ -75,3 +76,4 @@ def insert_rates(from_date, to_date, currency='USD'):
     finally:
         if conn is not None:
             conn.close()
+

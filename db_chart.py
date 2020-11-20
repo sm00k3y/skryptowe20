@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
-from datetime import datetime, date, timedelta
+from datetime import timedelta
 import psycopg2
-from db_config import config 
-import re
+from db_config import config
 
 
 def execute_command(command):
+    """ Executes command in the DVDRENTAL database """
     transactions = []
     conn = None
     try:
@@ -33,7 +33,7 @@ def execute_command(command):
 
 
 def prepare_data(from_date, to_date):
-
+    """ Preparing data to plot the char """
     dates = [from_date + timedelta(days=i) for i in range((to_date-from_date).days + 1)]
     usd_rates = {}
     pln_rates = {}
@@ -43,14 +43,16 @@ def prepare_data(from_date, to_date):
         usd_rates[date] = 0
         pln_rates[date] = 0
 
-    command = "SELECT date, rate FROM PLN_EXCHANGE_RATES"
+    command = "SELECT date, rate FROM PLN_EXCHANGE_RATES WHERE date > '{}' AND date < '{}'".format(
+            from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d"))
 
     transactions = execute_command(command)
 
     for tup in transactions:
         pln_base[tup[0]] = pln_base.get(tup[0], 0) + tup[1]
 
-    command = "SELECT amount, payment_date FROM payment"
+    command = "SELECT amount, payment_date FROM payment WHERE payment_date > '{}' AND payment_date < '{}'".format(
+            from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d"))
 
     transactions = execute_command(command)
 
@@ -63,13 +65,13 @@ def prepare_data(from_date, to_date):
 
 
 def plot_char(from_date, to_date):
-
+    """ Plotting the chart """
     dates, usd_rates, pln_rates = prepare_data(from_date, to_date)
 
     plt.figure(figsize=(10, 5))
     plt.title("Sum of transactions in the DVDRENTAL database in USD and PLN")
-    plt.plot(dates, usd_rates, label="USD Rates")
     plt.plot(dates, pln_rates, label="PLN Rates")
+    plt.plot(dates, usd_rates, label="USD Rates")
 
     plt.xlabel('Dates')
     plt.ylabel('Sum of transaction payments')
