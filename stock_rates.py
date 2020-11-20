@@ -1,13 +1,44 @@
 import requests
 import matplotlib.pyplot as plt
+from datetime import date, timedelta
 
 
 def get_rates_avg(currency, days):      # ZADANIE 1
     url = _url('/a/{0}/last/{1}/'.format(currency, days))
     resp = requests.get(url)
     if resp.status_code != 200:
-        raise Exception("GET {0} STATUS CODE: ".format(resp.status_code))
+        raise Exception("GET STATUS CODE: {0}".format(resp.status_code))
     return resp.json()
+
+
+def get_rates_avg_time(currency, from_date, to_date):
+    rates = {}
+
+    # If time is longer than a year, get rates in partitions
+    while (to_date - from_date).days >= 365:
+        to_date_temp = from_date + timedelta(days=365)
+        url = _url('/a/{0}/{1}/{2}'.format(currency, from_date.strftime("%Y-%m-%d"), to_date_temp.strftime("%Y-%m-%d")))
+        resp = requests.get(url)
+
+        if resp.status_code != 200:
+            raise Exception("GET STATUS CODE: {0}".format(resp.status_code))
+
+        for rate in resp.json()['rates']:
+            rates[rate['effectiveDate']] = rate['mid']
+
+        from_date = to_date_temp
+    
+    if from_date < to_date:
+        url = _url('/a/{0}/{1}/{2}'.format(currency, from_date.strftime("%Y-%m-%d"), to_date.strftime("%Y-%m-%d")))
+    resp = requests.get(url)
+
+    if resp.status_code != 200:
+        raise Exception("GET STATUS CODE: {0}".format(resp.status_code))
+
+    for rate in resp.json()['rates']:
+        rates[rate['effectiveDate']] = rate['mid']
+
+    return rates
 
 
 def _url(path):
