@@ -1,11 +1,11 @@
 import psycopg2
 import db_init
 from db_config import config
-from datetime import datetime
+from datetime import datetime, date
 
 OK = 200
 WRONG_DATE_FORMAT = 400
-WRONG_DATE_RANGE = 400
+WRONG_DATE_RANGE = 416
 NO_DATA_FOUND = 404
 
 
@@ -31,7 +31,7 @@ def get_rates_dates(date_from, date_to):
     if err_code != OK:
         return [], err_code
 
-    command = "SELECT date, rate, interpolated FROM PLN_EXCHANGE_RATES WHERE date > '{}' AND date < '{}'".format(date_from, date_to)
+    command = "SELECT date, rate, interpolated FROM PLN_EXCHANGE_RATES WHERE date >= '{}' AND date <= '{}'".format(date_from, date_to)
     transactions = execute_command(command)
     
     if transactions == []:
