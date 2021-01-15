@@ -1,19 +1,27 @@
 # Języki skryptowe - API - lista 5
 ## Jakub Smołka - 246987
 
-W implementacji listy 5 użyłem następujących technologii:
+### UPDATE 
+
+Strona została postawiona na heroku: [https://rates-and-sales-api.herokuapp.com/](https://rates-and-sales-api.herokuapp.com/)
+
+W implementacji listy 5-6 użyłem następujących technologii:
 * Python 3.7
 * API - Flask
 * Baza danych - PostgreSQL
+* React.js - Frontend
+* Heroku - Hosting
 
-## Instalacja i uruchomienie
+## Instalacja i uruchomienie lokalnie
+
+### Backend
 
 ```bash
 pip install requests
 pip install flask
 pip install psycopg2
 
-python3.7 main.py
+python3.7 api.py
 ```
 Do uruchomienia aplikacji potrzebna będzie baza danych PostgreSQL postawiona lokalnie. W katalogu z kodem należy umieścić plik database.ini:
 ```ini
@@ -25,20 +33,55 @@ password=<user_password>
 ```
 Bazę danych 'dvdrental', z której korzystałem do wykonania tego zadania można znaleźć [tutaj](https://www.postgresqltutorial.com/postgresql-sample-database/).
 
+### Frontend
+```bash
+npm install 
+npm start
+```
+
+
 
 ## Opis adresacji i działania API
 
 ### Adresacja
 
 Notowania z konkretnego dnia lub zakresu dat wraz z informacją 'interpolated':
+
+Lokalnie:
+
 ```python
-GET http://127.0.0.1:5000/USD/<data> 
-GET http://127.0.0.1:5000/USD/<data_od>/<data_do> 
+GET http://127.0.0.1:5000/api/rates/USD/<data> 
+GET http://127.0.0.1:5000/api/rates/USD/<data_od>/<data_do> 
+
+np: GET http://127.0.0.1:5000/api/rates/USD/2007-02-16/2007-02-18
 ```
+
+Zdalnie:
+```url
+GET https://rates-and-sales-api.herokuapp.com/api/rates/USD/<data> 
+GET https://rates-and-sales-api.herokuapp.com/api/rates/USD/<data_od>/<data_do> 
+
+np: GET https://rates-and-sales-api.herokuapp.com/api/rates/USD/2007-02-16/2007-02-18
+```
+
 Suma sprzedaży wraz z przeliczeniem po kursie z danego dnia, lub zakresu dat:
+
+Lokalnie:
+
 ```python
-GET http://127.0.0.1:5000/sales/<data>
-GET http://127.0.0.1:5000/sales/<data_od>/<data_do>
+GET http://127.0.0.1:5000/api/sales/<data>
+GET http://127.0.0.1:5000/api/sales/<data_od>/<data_do>
+
+np: GET http://127.0.0.1:5000/api/sales/2007-02-16/2007-02-18
+```
+
+Zdalnie: 
+
+```url
+GET https://rates-and-sales-api.herokuapp.com/api/sales/<data>
+GET https://rates-and-sales-api.herokuapp.com/api/sales/<data_od>/<data_do>
+
+np: GET https://rates-and-sales-api.herokuapp.com/api/sales/2007-02-16/2007-02-18
 ```
 
 ### Cache
